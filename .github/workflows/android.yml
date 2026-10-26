@@ -1,4 +1,4 @@
-name: Android build
+name: Build Android APK
 
 on:
   push:
@@ -11,10 +11,11 @@ permissions:
   contents: read
 
 jobs:
-  assemble:
+  build:
+    name: Build debug APK
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -34,5 +35,12 @@ jobs:
         with:
           gradle-version: '8.13'
 
-      - name: Assemble debug APK
+      - name: Build APK
         run: gradle --no-daemon :app:assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: auto-scroll-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
